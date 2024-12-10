@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxConcentrationElement = document.getElementById('maxConcentration');
     const steadyStateElement = document.getElementById('steadyState');
     const timeToSteadyElement = document.getElementById('timeToSteady');
+    const shareButton = document.getElementById('shareButton');
+    const shareUrlContainer = document.getElementById('shareUrlContainer');
+    const shareUrlInput = document.getElementById('shareUrl');
+    const copyButton = document.getElementById('copyButton');
 
     // Initialize Chart.js
     const initializeGraph = () => {
@@ -35,7 +39,17 @@ document.addEventListener('DOMContentLoaded', () => {
         timeToSteadyElement.textContent = timeToSteady === Infinity ? '∞' : timeToSteady.toFixed(1);
     };
 
-    // Update URL with current parameters
+    // Generate shareable URL
+    const generateShareableUrl = (volume, inputFlow, ventilation, duration) => {
+        const params = new URLSearchParams();
+        params.set('v', volume);
+        params.set('i', inputFlow);
+        params.set('o', ventilation);
+        params.set('d', duration);
+        return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    };
+
+    // Update URL without showing share container
     const updateURL = (volume, inputFlow, ventilation, duration) => {
         const params = new URLSearchParams();
         params.set('v', volume);
@@ -44,6 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
         params.set('d', duration);
         const newURL = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, '', newURL);
+    };
+
+    // Show share URL
+    const showShareUrl = (volume, inputFlow, ventilation, duration) => {
+        const shareableUrl = generateShareableUrl(volume, inputFlow, ventilation, duration);
+        shareUrlInput.value = shareableUrl;
+        shareUrlContainer.style.display = 'flex';
     };
 
     // Read parameters from URL
@@ -113,6 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update URL with current parameters
             updateURL(volume, inputFlow, ventilation, duration);
 
+            // Enable share button
+            shareButton.disabled = false;
+
         } catch (error) {
             console.error('Error processing calculation:', error);
             alert('An error occurred while calculating. Please check the console for details.');
@@ -133,6 +157,31 @@ document.addEventListener('DOMContentLoaded', () => {
         performCalculation(volume, inputFlow, ventilation, duration);
     });
 
+    // Share button click handler
+    shareButton.addEventListener('click', () => {
+        const volume = parseFloat(document.getElementById('volume').value);
+        const inputFlow = parseFloat(document.getElementById('inputFlow').value);
+        const ventilation = parseFloat(document.getElementById('ventilation').value);
+        const duration = parseInt(document.getElementById('duration').value);
+
+        showShareUrl(volume, inputFlow, ventilation, duration);
+    });
+
+    // Copy button click handler
+    copyButton.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(shareUrlInput.value);
+            const originalText = copyButton.textContent;
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyButton.textContent = originalText;
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            alert('Failed to copy to clipboard');
+        }
+    });
+
     // Initialize graph on page load
     try {
         initializeGraph();
@@ -145,6 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setFormValues(urlParams);
             performCalculation(urlParams.volume, urlParams.inputFlow, 
                              urlParams.ventilation, urlParams.duration);
+        } else {
+            // Disable share button initially if no calculation has been performed
+            shareButton.disabled = true;
         }
     } catch (error) {
         console.error('Error during initial graph setup:', error);

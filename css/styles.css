@@ -125,6 +125,43 @@ button:active {
     color: #3498db;
 }
 
+/* Share section styles */
+.share-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+}
+
+.share-button {
+    background-color: #27ae60;
+    margin-bottom: 1rem;
+}
+
+.share-button:hover {
+    background-color: #219a52;
+}
+
+.share-url-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.share-url-container input[type="text"] {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #fff;
+}
+
+.share-url-container button {
+    width: auto;
+    padding: 0.75rem 1.5rem;
+    background-color: #3498db;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     main {
@@ -137,6 +174,14 @@ button:active {
 
     h1 {
         font-size: 2rem;
+    }
+
+    .share-url-container {
+        flex-direction: column;
+    }
+
+    .share-url-container button {
+        width: 100%;
     }
 }
 
