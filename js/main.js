@@ -35,18 +35,39 @@ document.addEventListener('DOMContentLoaded', () => {
         timeToSteadyElement.textContent = timeToSteady === Infinity ? '∞' : timeToSteady.toFixed(1);
     };
 
-    // Handle form submission
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log('Form submitted');
+    // Update URL with current parameters
+    const updateURL = (volume, inputFlow, ventilation, duration) => {
+        const params = new URLSearchParams();
+        params.set('v', volume);
+        params.set('i', inputFlow);
+        params.set('o', ventilation);
+        params.set('d', duration);
+        const newURL = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, '', newURL);
+    };
 
-        // Get form values
-        const volume = parseFloat(document.getElementById('volume').value);
-        const inputFlow = parseFloat(document.getElementById('inputFlow').value);
-        const ventilation = parseFloat(document.getElementById('ventilation').value);
-        const duration = parseInt(document.getElementById('duration').value);
+    // Read parameters from URL
+    const getURLParameters = () => {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            volume: parseFloat(params.get('v')),
+            inputFlow: parseFloat(params.get('i')),
+            ventilation: parseFloat(params.get('o')),
+            duration: parseInt(params.get('d'))
+        };
+    };
 
-        console.log('Input values:', { volume, inputFlow, ventilation, duration });
+    // Set form values
+    const setFormValues = (values) => {
+        document.getElementById('volume').value = values.volume;
+        document.getElementById('inputFlow').value = values.inputFlow;
+        document.getElementById('ventilation').value = values.ventilation;
+        document.getElementById('duration').value = values.duration;
+    };
+
+    // Perform calculation
+    const performCalculation = (volume, inputFlow, ventilation, duration) => {
+        console.log('Performing calculation with:', { volume, inputFlow, ventilation, duration });
 
         // Validate inputs
         const validation = GasCalculator.validateInputs(volume, inputFlow, ventilation, duration);
@@ -89,16 +110,42 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update statistics display
             updateStatistics(maxConcentration, steadyState, timeToSteady);
 
+            // Update URL with current parameters
+            updateURL(volume, inputFlow, ventilation, duration);
+
         } catch (error) {
             console.error('Error processing calculation:', error);
             alert('An error occurred while calculating. Please check the console for details.');
         }
+    };
+
+    // Handle form submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('Form submitted');
+
+        // Get form values
+        const volume = parseFloat(document.getElementById('volume').value);
+        const inputFlow = parseFloat(document.getElementById('inputFlow').value);
+        const ventilation = parseFloat(document.getElementById('ventilation').value);
+        const duration = parseInt(document.getElementById('duration').value);
+
+        performCalculation(volume, inputFlow, ventilation, duration);
     });
 
     // Initialize graph on page load
     try {
         initializeGraph();
         console.log('Initial graph setup complete');
+
+        // Check for URL parameters and perform calculation if present
+        const urlParams = getURLParameters();
+        if (!isNaN(urlParams.volume) && !isNaN(urlParams.inputFlow) && 
+            !isNaN(urlParams.ventilation) && !isNaN(urlParams.duration)) {
+            setFormValues(urlParams);
+            performCalculation(urlParams.volume, urlParams.inputFlow, 
+                             urlParams.ventilation, urlParams.duration);
+        }
     } catch (error) {
         console.error('Error during initial graph setup:', error);
     }
