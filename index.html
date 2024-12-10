@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas Concentration Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Load Chart.js first -->
+    <script src="lib/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gas Concentration Calculator</h1>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <form id="calculatorForm">
+                    <div class="form-group">
+                        <label for="volume">Space Volume (m³):</label>
+                        <input type="number" id="volume" name="volume" required min="0" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputFlow">Gas Input Flow Rate (L/min):</label>
+                        <input type="number" id="inputFlow" name="inputFlow" required min="0" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ventilation">Ventilation Rate (L/min):</label>
+                        <input type="number" id="ventilation" name="ventilation" required min="0" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Simulation Duration (minutes):</label>
+                        <input type="number" id="duration" name="duration" required min="5" max="360" step="5" value="60">
+                    </div>
+
+                    <button type="submit" id="calculateButton">Calculate</button>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <div class="graph-container">
+                    <canvas id="concentrationGraph"></canvas>
+                </div>
+                <div class="stats">
+                    <h3>Statistics</h3>
+                    <p>Maximum Concentration: <span id="maxConcentration">-</span> ppm</p>
+                    <p>Steady State Concentration: <span id="steadyState">-</span> ppm</p>
+                    <p>Time to Reach 90% of Steady State: <span id="timeToSteady">-</span> minutes</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load our scripts in the correct order -->
+    <script src="js/graph.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

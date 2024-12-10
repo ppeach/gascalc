@@ -1,0 +1,16 @@
+gascalc/
+├── index.html           # Main application page
+├── css/
+│   └── styles.css      # Main stylesheet
+├── js/
+│   ├── main.js         # Main application logic
+│   ├── calculator.js   # Gas concentration calculations
+│   └── graph.js        # Graph rendering and updates
+├── lib/                # Third-party libraries
+│   └── chart.js        # Graphing library
+├── tests/              # Unit tests
+│   └── calculator.test.js  # Tests for calculation functions
+├── docs/               # Documentation
+│   ├── functional_specifications.txt
+│   └── directory_structure.txt
+└── README.md          # Project documentation
